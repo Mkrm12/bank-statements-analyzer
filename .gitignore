@@ -1,0 +1,11 @@
+# API Keys and Secrets
+.env
+
+# Personal Data
+pdf/
+data/
+
+# Python leftovers
+__pycache__/
+*.py[cod]
+*$py.class
