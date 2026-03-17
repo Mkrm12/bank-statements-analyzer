@@ -1,22 +1,23 @@
-# 🏦 Banker: AI-Powered Financial Auditor
+# 🏦 AI Financial Auditor (Web Edition)
 
-Banker is a Python-based tool that extracts transaction data from bank statements and uses the **Google Gemini API** to intelligently categorize your spending habits. 
+Transform your boring bank statements into a brutal, AI-powered financial audit. Now featuring a full **Streamlit Web Interface**, multi-bank support, and interactive data visualizations.
 
-Forget "General Shopping"—this tool analyzes your descriptions to invent habits like "Fast Fashion," "Gaming Overload," or "Midnight Cravings."
+## 🚀 Key Features
+- **Modern Web UI**: Drag-and-drop your PDFs directly in your browser.
+- **Smart Routing 2.0**: Automatic detection and extraction for **HSBC** and **Santander** statements.
+- **Context-Aware AI**: The engine remembers your categories via `memory.json` to keep audits consistent across months.
+- **Interactive Visuals**: View your spending through dynamic bar charts and expandable category breakdowns.
+- **The Roast**: A brutally honest, sarcastic financial assessment powered by Gemini 2.5 Flash.
 
-## 🚀 Features
-- **PDF Extraction**: Automatically parses bank statements into structured CSV data.
-- **AI Categorization**: Uses `gemini-2.0-flash` to dynamically create categories based on *your* specific spending patterns.
-- **Local Math**: Performs all financial totals locally using Pandas for speed and privacy.
-
-> [!IMPORTANT]  
-> **Currently Supported Banks:** HSBC (UK). More templates coming soon!
-
----
+## 📂 Project Structure
+- `app.py`: The Streamlit frontend (run this to start the app).
+- `extractor.py`: The engine that parses PDFs (formerly `conv.py`).
+- `analyzer.py`: The logic for AI categorization and roasting (formerly `banker.py`).
+- `memory.json`: Local cache for shop-to-category mapping (auto-generated).
 
 ## 🛠️ Setup & Installation
 
-### 1. Clone the repo
-```bash
-git clone [https://github.com/YOUR_USERNAME/Banker.git](https://github.com/YOUR_USERNAME/Banker.git)
-cd Banker
+1. **Clone the Repo**:
+   ```bash
+   git clone [https://github.com/Mkrm12/Banker.git](https://github.com/Mkrm12/Banker.git)
+   cd Banker

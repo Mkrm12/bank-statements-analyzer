@@ -1,9 +1,10 @@
 # API Keys and Secrets
 .env
 
-# Personal Data
-pdf/
+# Personal Data & AI Cache
+pdf*/
 data/
+memory.json
 
 # Python leftovers
 __pycache__/

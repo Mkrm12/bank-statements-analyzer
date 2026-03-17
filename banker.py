@@ -1,60 +1,83 @@
 import os
 import pandas as pd
 import json
+import duckdb
+import re
 from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
 
-# 1. Setup
 load_dotenv()
-csv_file = "data/bank_statement_1.csv"
-print(f"📊 Loading data from {csv_file}...\n")
 
-df = pd.read_csv(csv_file, header=None, names=["Date", "Description", "Amount"])
-df['Amount'] = df['Amount'].replace(',', '', regex=True)
-df['Amount'] = pd.to_numeric(df['Amount'], errors='coerce')
-
-unique_descriptions = df['Description'].dropna().unique().tolist()
-
-llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0)
-
-# 2. THE DYNAMIC PROMPT
-print("🧠 Asking Gemini to INVENT categories based on your spending...\n")
-prompt = f"""
-You are a brilliant financial analyst. Look at this list of unique bank transactions:
-{unique_descriptions}
-
-I want you to analyze these and INVENT 5 to 8 major spending categories that best describe this specific person's habits (e.g., if you see lots of Temu, make a "Fast Fashion" category. If you see Steam, make a "Gaming" category). 
-
-Return ONLY a valid JSON dictionary where the key is the transaction name, and the value is the category you assigned it to. Every transaction must be assigned a category.
-"""
-
-response = llm.invoke(prompt)
-
-# Clean and load the JSON
-clean_json_string = response.content.replace("```json", "").replace("```", "").strip()
-category_dict = json.loads(clean_json_string)
-
-print("⚙️ Processing dynamic math locally...\n")
-
-# 3. THE PANDAS MAGIC (Map and GroupBy)
-# This maps the AI's categories directly onto our main DataFrame
-df['Category'] = df['Description'].map(category_dict).fillna('Uncategorized')
-
-# This automatically groups everything by the AI's categories and adds up the money
-summary_df = df.groupby('Category')['Amount'].sum().reset_index()
-summary_df = summary_df.sort_values(by='Amount', ascending=False) # Sort by most expensive
-
-# 4. PRINT THE DYNAMIC REPORT
-print("📈 YOUR PERSONALIZED FINANCIAL AUDIT:")
-print("=" * 50)
-for index, row in summary_df.iterrows():
-    cat = row['Category']
-    total = row['Amount']
-    print(f"\n📂 CATEGORY: {cat.upper()} | Total Spent: £{total:.2f}")
-    print("-" * 50)
+def run_ai_audit(df):
+    cache_file = "memory.json"
     
-    # Show the exact transactions inside this category
-    cat_transactions = df[df['Category'] == cat]
-    print(cat_transactions[['Date', 'Description', 'Amount']].to_string(index=False))
+    # 1. LOAD CACHE
+    if os.path.exists(cache_file):
+        with open(cache_file, "r") as f:
+            memory_cache = json.load(f)
+    else:
+        memory_cache = {}
 
-print("\n✅ Audit Complete.")
+    unique_descriptions = df['Description'].dropna().unique().tolist()
+    new_shops = [shop for shop in unique_descriptions if shop not in memory_cache]
+    existing_categories = list(set(memory_cache.values()))
+
+    llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash-lite", temperature=0)
+
+    # 2. AI CATEGORIZATION (Context-Aware)
+    if new_shops:
+        prompt = f"""
+        You are an elite financial auditor. You need to categorize these NEW bank transactions:
+        {new_shops}
+
+        Here are the EXISTING categories you have already established for this user:
+        {existing_categories}
+
+        CRITICAL INSTRUCTIONS:
+        1. Prioritize sorting these new transactions into the EXISTING categories listed above.
+        2. ONLY invent a new category if the transaction is a completely new type of spending that absolutely does not fit anywhere else.
+        3. Do not create hyper-specific categories for 1 or 2 items. If it is ambiguous, put it in a broad existing category.
+
+        Return ONLY a valid JSON dictionary where the key is the transaction name, and the value is the category string. Do not add any conversational text.
+        """
+        
+        response = llm.invoke(prompt)
+        raw_response = response.content
+        json_match = re.search(r'\{.*\}', raw_response, re.DOTALL)
+        
+        if json_match:
+            clean_json_string = json_match.group(0)
+            try:
+                new_categories = json.loads(clean_json_string)
+                memory_cache.update(new_categories)
+                with open(cache_file, "w") as f:
+                    json.dump(memory_cache, f, indent=4)
+            except json.JSONDecodeError:
+                pass # Silently fail for UI
+
+    # 3. MAP CATEGORIES
+    df['Category'] = df['Description'].map(memory_cache).fillna('Uncategorized')
+
+    # 4. DUCKDB MATH
+    query = """
+        SELECT Category, SUM(Amount) as Total_Spent
+        FROM df
+        GROUP BY Category
+        ORDER BY Total_Spent DESC
+    """
+    summary_df = duckdb.query(query).df()
+
+    # 5. THE AI ROAST
+    spending_summary = summary_df.to_string(index=False)
+    roast_prompt = f"""
+    You are a brutally honest, sarcastic financial advisor. 
+    Here is my exact spending breakdown:
+
+    {spending_summary}
+
+    Roast my financial habits in exactly 3 sentences. Highlight the most ridiculous categories. Be harsh but factual. No emojis.
+    """
+    roast_response = llm.invoke(roast_prompt)
+    roast_text = roast_response.content
+
+    return df, summary_df, roast_text
