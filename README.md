@@ -12,7 +12,7 @@ Transform your boring bank statements into a brutal, AI-powered financial audit.
 ## 📂 Project Structure
 - `app.py`: The Streamlit frontend (run this to start the app).
 - `extractor.py`: The engine that parses PDFs (formerly `conv.py`).
-- `analyzer.py`: The logic for AI categorization and roasting (formerly `banker.py`).
+- `banker.py`: The logic for AI categorization and roasting.
 - `memory.json`: Local cache for shop-to-category mapping (auto-generated).
 
 ## 🛠️ Setup & Installation

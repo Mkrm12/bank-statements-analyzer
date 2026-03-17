@@ -3,3 +3,4 @@ python-dotenv
 langchain-google-genai
 pdfplumber
 duckdb
+streamlit
