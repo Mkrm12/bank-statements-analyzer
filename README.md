@@ -7,11 +7,16 @@ Transform your boring bank statements into a brutal, AI-powered financial audit.
 - **Smart Routing 2.0**: Automatic detection and extraction for **HSBC** and **Santander** statements.
 - **Context-Aware AI**: The engine remembers your categories via `memory.json` to keep audits consistent across months.
 - **Interactive Visuals**: View your spending through dynamic bar charts and expandable category breakdowns.
-- **The Roast**: A brutally honest, sarcastic financial assessment powered by Gemini 2.5 Flash.
+- **The Roast**: A brutally honest, sarcastic financial assessment.
+
+## ⚡ Recent Updates & Optimizations
+- **AI Router Upgrade**: Integrated GitHub Models (`gpt-4o`) for elite categorization and Groq (`llama-3.3-70b` & `llama-3.1-8b`) as a lightning-fast Gemini fallback for chat.
+- **Docker Support**: Added a `Dockerfile` for seamless containerized deployment.
+- *Dev Note: Currently tracking a few minor visual bugs with the DuckDB/Plotly chart rendering and edge-case chatbot queries.*
 
 ## 📂 Project Structure
 - `app.py`: The Streamlit frontend (run this to start the app).
-- `extractor.py`: The engine that parses PDFs (formerly `conv.py`).
+- `extractor.py`: The engine that parses PDFs.
 - `banker.py`: The logic for AI categorization and roasting.
 - `memory.json`: Local cache for shop-to-category mapping (auto-generated).
 
@@ -19,5 +24,5 @@ Transform your boring bank statements into a brutal, AI-powered financial audit.
 
 1. **Clone the Repo**:
    ```bash
-   git clone [https://github.com/Mkrm12/Banker.git](https://github.com/Mkrm12/Banker.git)
-   cd Banker
+   git clone [https://github.com/Mkrm12/bank-statements-analyzer.git](https://github.com/Mkrm12/bank-statements-analyzer.git)
+   cd bank-statements-analyzer
