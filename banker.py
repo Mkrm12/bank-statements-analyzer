@@ -5,10 +5,11 @@ import duckdb
 import re
 from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_openai import ChatOpenAI
 
 load_dotenv()
 
-def run_ai_audit(df):
+def run_ai_audit(df, ai_choice):
     cache_file = "memory.json"
     
     if os.path.exists(cache_file):
@@ -20,104 +21,109 @@ def run_ai_audit(df):
     unique_descriptions = df['Description'].dropna().unique().tolist()
     new_shops = [shop for shop in unique_descriptions if shop not in memory_cache]
     
-    MAX_SHOPS_PER_BATCH = 50
+    MAX_SHOPS_PER_BATCH = 40
     if len(new_shops) > MAX_SHOPS_PER_BATCH:
         new_shops = new_shops[:MAX_SHOPS_PER_BATCH]
         
     existing_categories = list(set([data.get('category') for data in memory_cache.values() if isinstance(data, dict)]))
 
-    llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0)
+    if ai_choice == "Option 1: Gemini Flash 2.5":
+        llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0)
+    else:
+        primary_llm = ChatOpenAI(model="gpt-4o", api_key=os.getenv("GITHUB_TOKEN"), base_url="https://models.github.ai/inference", temperature=0)
+        fallback_llm = ChatOpenAI(model="gpt-4o-mini", api_key=os.getenv("GITHUB_TOKEN"), base_url="https://models.github.ai/inference", temperature=0)
+        llm = primary_llm.with_fallbacks([fallback_llm])
 
-    # --- PASS 1: INITIAL CATEGORIZATION ---
+    # ==========================================
+    # PASS 1: INITIAL CATEGORIZATION
+    # ==========================================
     if new_shops:
         prompt = f"""
-        You are an elite financial data scientist. Analyze these NEW bank transactions:
+        You are a ruthless financial auditor. Review these RAW bank transaction descriptions:
         {new_shops}
 
         EXISTING categories: {existing_categories}
 
         CRITICAL INSTRUCTIONS:
-        1. STRICTLY NO "UNCATEGORIZED": You MUST assign a valid category. Make your best logical deduction.
-        2. LETTER-LEVEL DEDUCTION: Decode acronyms, typos, and local UK shops. 
-           - 'GDK' = German Doner Kebab -> 'Takeaway'
-           - 'papas' or 'papa;s' = Papa's -> 'Takeaway'
-           - 'BP' = Bank Payment -> 'Transfers'
-           - 'AMZN' = Amazon -> 'Shopping'
-        3. CATEGORY LIMITS: Try to group into broad, existing categories first. If absolutely necessary, create a new one (Max 30 global categories total like 'Groceries', 'Entertainment', 'Bills').
-        4. "clean_name": Strip all junk (dates, 'VIS', 'CARDPAYMENT'). Return the pure brand name.
+        1. GRANULAR UMBRELLAS: Group similar stores into clean, distinct categories (e.g. 'Groceries', 'Takeaway & Dining', 'Subscriptions', 'Transport'). Aim for high granularity where logical, breaking out distinct spending habits.
+        2. NO BRAND NAMES IN CATEGORIES: You are FORBIDDEN from outputting categories like "Dining - Spice Hut". The category MUST be the generic umbrella term.
+        3. NO ESCAPE HATCHES: Assign a highly specific category to EVERY item. BANNED WORDS: 'Overhead', 'General', 'Miscellaneous', 'Other', 'Unknown', 'Uncategorized'.
+        4. CLEAN NAME: Remove dates, store numbers, and 'VIS'. Keep the brand name clean.
 
-        Return ONLY a valid JSON dictionary mapping the exact raw name to the category and clean_name.
-        Example Format:
-        {{
-            "CARDPAYMENTTOTFLTRAVELCHON14-09-2024": {{"category": "Transit", "clean_name": "TFL"}},
-            "))) SPICE HUT LONDON": {{"category": "Takeaway", "clean_name": "Spice Hut"}}
-        }}
+        Output ONLY a valid JSON dictionary mapping the EXACT raw name to your determined category and clean_name.
         """
-
-
-        response = llm.invoke(prompt)
-        json_match = re.search(r'\{.*\}', response.content, re.DOTALL)
-        
-        if json_match:
-            try:
-                new_categories = json.loads(json_match.group(0))
-                memory_cache.update(new_categories)
+        try:
+            response = llm.invoke(prompt)
+            json_match = re.search(r'\{.*\}', response.content, re.DOTALL)
+            if json_match:
+                memory_cache.update(json.loads(json_match.group(0)))
                 with open(cache_file, "w") as f:
                     json.dump(memory_cache, f, indent=4)
-            except json.JSONDecodeError:
-                pass 
+        except Exception as e:
+            print(f"Pass 1 Error: {e}")
 
-    # --- PASS 2: THE "UNCATEGORIZED" SWEEP ---
-    # Find anything that fell through the cracks and force the AI to try again
-    uncategorized_shops = [shop for shop, data in memory_cache.items() if isinstance(data, dict) and data.get('category') in ['Uncategorized', '', None]]
+    # ==========================================
+    # PASS 2: THE ERROR SWEEP
+    # ==========================================
+    df['Category'] = df['Description'].map(lambda x: memory_cache.get(x, {}).get('category', 'AI MAPPING ERROR') if isinstance(memory_cache.get(x), dict) else 'AI MAPPING ERROR')
     
-    if uncategorized_shops:
-        updated_categories = list(set([data.get('category') for data in memory_cache.values() if isinstance(data, dict) and data.get('category') not in ['Uncategorized', '', None]]))
-        
+    unmapped_shops = df[df['Category'] == 'AI MAPPING ERROR']['Description'].unique().tolist()
+    
+    if unmapped_shops:
         sweep_prompt = f"""
-        You are a financial auditor. These ambiguous bank transactions failed to categorize:
-        {uncategorized_shops}
-
-        Confirmed categories we are already using: {updated_categories}
-
-        CRITICAL INSTRUCTIONS:
-        1. Forcefully map these ambiguous shops into one of the EXISTING categories. Use deduction.
-        2. "clean_name": Clean up the garbage characters into a readable brand name.
-        
-        Return ONLY a valid JSON dictionary mapping the raw name to the new category and clean_name.
+        You previously failed to map these items: {unmapped_shops}
+        Map them using broad umbrella categories (e.g. 'Groceries', 'Takeaway'). NO BRAND NAMES IN THE CATEGORY.
+        Return ONLY a JSON dictionary mapping the raw name to the category and clean_name.
         """
         try:
             sweep_response = llm.invoke(sweep_prompt)
-            sweep_match = re.search(r'\{.*\}', sweep_response.content, re.DOTALL)
-            if sweep_match:
-                swept_categories = json.loads(sweep_match.group(0))
-                memory_cache.update(swept_categories)
+            json_match = re.search(r'\{.*\}', sweep_response.content, re.DOTALL)
+            if json_match:
+                memory_cache.update(json.loads(json_match.group(0)))
                 with open(cache_file, "w") as f:
                     json.dump(memory_cache, f, indent=4)
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"Pass 2 Error: {e}")
 
-    # Map the final dict back to the DataFrame
-    df['Category'] = df['Description'].map(lambda x: memory_cache.get(x, {}).get('category', 'Uncategorized') if isinstance(memory_cache.get(x), dict) else 'Uncategorized')
+    # ==========================================
+    # PASS 3: FINAL GRAPH DATA & THE ROAST
+    # ==========================================
+    
+    # Final mappings applied
+    df['Category'] = df['Description'].map(lambda x: memory_cache.get(x, {}).get('category', 'AI MAPPING ERROR') if isinstance(memory_cache.get(x), dict) else 'AI MAPPING ERROR')
     df['Clean_Description'] = df['Description'].map(lambda x: memory_cache.get(x, {}).get('clean_name', x) if isinstance(memory_cache.get(x), dict) else x)
-
-    query = """
-        SELECT Category, SUM(Amount) as Total_Spent
-        FROM df
-        GROUP BY Category
+    
+    # Explicitly cast to DOUBLE inside the query so DuckDB doesn't treat it as a Boolean/String
+    final_query = """
+        SELECT 
+            Category, 
+            SUM(CAST(Amount AS DOUBLE)) as Total_Spent 
+        FROM df 
+        GROUP BY Category 
         ORDER BY Total_Spent DESC
     """
-    summary_df = duckdb.query(query).df()
 
-    spending_summary = summary_df.to_string(index=False)
+    try:
+        final_summary_df = duckdb.query(final_query).df()
+    except Exception as e:
+        # Fallback if the cast fails due to weird characters
+        print(f"DuckDB Query Error: {e}")
+        final_summary_df = df.groupby('Category')['Amount'].sum().reset_index().rename(columns={'Amount': 'Total_Spent'})
+
+    final_summary_df['Total_Spent'] = pd.to_numeric(final_summary_df['Total_Spent'], errors='coerce').fillna(0.0)
+
+    # NOW we roast the perfectly clean data
+    spending_summary = final_summary_df.to_string(index=False)
     roast_prompt = f"""
-    You are a brutally honest, sarcastic comedian and financial advisor. 
-    Here is my exact spending breakdown:
-
+    You are a brutally honest, sarcastic comedian and financial advisor.
+    Here is the user's PERFECTLY CLEANED spending summary:
     {spending_summary}
-
-    Roast my financial habits in exactly ONE brutal, sarcastic punchline sentence. No intro, no outro, just the kill shot. Be harsh but factual. No emojis.
+    
+    Roast their financial habits in exactly ONE brutal, short sarcastic punchline sentence. No intro, no emojis.
     """
-    roast_response = llm.invoke(roast_prompt)
+    try:
+        roast_response_text = llm.invoke(roast_prompt).content
+    except:
+        roast_response_text = "You broke the AI with your terrible spending habits."
 
-    return df, summary_df, roast_response.content
+    return df, final_summary_df, roast_response_text

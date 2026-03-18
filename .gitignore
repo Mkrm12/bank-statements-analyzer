@@ -1,12 +1,8 @@
-# API Keys and Secrets
 .env
-
-# Personal Data & AI Cache
-pdf*/
-data/
+auth.json
 memory.json
-
-# Python leftovers
 __pycache__/
-*.py[cod]
-*$py.class
+pdf/
+pdf2/
+pdf3/
+data/

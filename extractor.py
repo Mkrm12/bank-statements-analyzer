@@ -49,7 +49,8 @@ def parse_hsbc(pdf):
                     parsed_transactions.append({
                         "Date": current_date,
                         "Description": final_description,
-                        "Amount": actual_amount
+                        "Amount": actual_amount,
+                        "Bank": "HSBC"
                     })
                 text_buffer = "" 
             else:
@@ -97,7 +98,8 @@ def parse_santander(pdf):
                 parsed_transactions.append({
                     "Date": clean_date,
                     "Description": desc_val,
-                    "Amount": amount_val
+                    "Amount": amount_val,
+                    "Bank": "Santander"
                 })
                 
     return parsed_transactions

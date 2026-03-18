@@ -1,0 +1,145 @@
+/* Import Inter Font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+html, body, [class*="css"] {
+    font-family: 'Inter', sans-serif !important;
+}
+
+/* Main App Background (Light Grey) */
+.stApp {
+    background-color: #F9FAFB !important;
+}
+
+/* --- HEADER & DEPLOY BUTTON FIX --- */
+/* Make the header transparent but keep it active so the arrow works */
+header[data-testid="stHeader"] {
+    background-color: transparent !important;
+}
+/* Hide only the Deploy button, Toolbar, and Footer */
+.stDeployButton { display: none !important; }
+[data-testid="stToolbar"] { visibility: hidden !important; }
+footer { visibility: hidden !important; }
+
+/* Midnight SaaS Sidebar (Width restrictions removed for smooth collapsing) */
+[data-testid="stSidebar"] {
+    background-color: #111827 !important;
+    border-right: none !important;
+}
+[data-testid="stSidebar"] * {
+    color: #E5E7EB !important; 
+}
+
+/* Active Sidebar Buttons */
+div[role="radiogroup"] label {
+    background-color: transparent !important;
+    padding: 12px 15px !important;
+    border-radius: 8px !important;
+    transition: all 0.2s ease !important;
+}
+div[role="radiogroup"] label:hover {
+    background-color: #1F2937 !important;
+}
+
+/* Floating Metric Cards */
+[data-testid="stMetric"] {
+    background-color: #FFFFFF !important;
+    border-radius: 16px !important;
+    padding: 20px !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
+    border: 1px solid #F3F4F6 !important;
+}
+[data-testid="stMetricValue"] {
+    color: #4F46E5 !important; 
+    font-weight: 700 !important;
+    font-size: 2.2rem !important;
+}
+[data-testid="stMetricLabel"] {
+    color: #6B7280 !important;
+    font-weight: 600 !important;
+}
+
+/* Premium Category Expanders */
+[data-testid="stExpander"] {
+    background-color: #FFFFFF !important;
+    border-radius: 12px !important;
+    border: 1px solid #F3F4F6 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02) !important;
+    overflow: hidden !important;
+}
+div[data-testid="stExpander"] details summary {
+    background-color: #FFFFFF !important;
+    padding: 15px 15px !important;
+    font-weight: 700 !important;
+    color: #111827 !important;
+    border-bottom: 1px solid #F3F4F6 !important;
+}
+
+/* BEAUTIFUL TABLES */
+[data-testid="stDataFrame"] {
+    border-radius: 8px !important;
+    border: none !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
+}
+[data-testid="stDataFrame"] table {
+    background-color: #FFFFFF !important;
+}
+[data-testid="stDataFrame"] th {
+    background-color: #F3F4F6 !important;
+    color: #374151 !important;
+    font-weight: 600 !important;
+    border-bottom: 2px solid #E5E7EB !important;
+}
+
+/* Gradient Primary Button */
+[data-testid="baseButton-primary"] {
+    background: linear-gradient(135deg, #4F46E5 0%, #3B82F6 100%) !important;
+    color: #FFFFFF !important;
+    border-radius: 12px !important;
+    border: none !important;
+    padding: 0.75rem 1.5rem !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3) !important;
+    transition: transform 0.1s ease !important;
+}
+[data-testid="baseButton-primary"]:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 12px rgba(59, 130, 246, 0.4) !important;
+}
+
+/* CHAT UI GLOW-UP */
+.stChatMessage {
+    border-radius: 16px !important;
+    padding: 20px !important;
+    margin-bottom: 15px !important;
+}
+.stChatMessage * {
+    color: #1F2937 !important;
+}
+
+/* AI Assistant Bubble Style */
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"]) {
+    background-color: #FFFFFF !important;
+    border: 1px solid #E5E7EB !important;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05) !important;
+}
+
+/* User Bubble Style */
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) {
+    background-color: #EEF2FF !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* --- STATIC SIDEBAR ARROWS (NO HOVERS) --- */
+
+/* 1. The OPEN arrow (Outside on the Light App Background) */
+[data-testid="collapsedControl"] svg {
+    color: #4B5563 !important; /* Dark Gray */
+    fill: #4B5563 !important;
+}
+
+/* 2. The CLOSE arrow (Inside the Dark Sidebar) */
+[data-testid="stSidebarCollapseButton"] svg {
+    color: #9CA3AF !important; /* Light Gray */
+    fill: #9CA3AF !important;
+}

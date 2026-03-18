@@ -1,6 +1,9 @@
+streamlit==1.32.0
 pandas
+plotly
+duckdb
 python-dotenv
 langchain-google-genai
 pdfplumber
-duckdb
-streamlit
+langchain-groq
+langchain-openai
