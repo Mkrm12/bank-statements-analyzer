@@ -1,5 +1,5 @@
-pdfs/
-__pycache__/
 .env
-memory.json
 auth.json
+global_stats.json
+memory.json
+__pycache__/

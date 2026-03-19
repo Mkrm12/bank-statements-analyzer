@@ -1,8 +1,10 @@
 .env
 auth.json
 memory.json
+global_stats.json
 __pycache__/
 pdf/
 pdf2/
 pdf3/
 data/
+.DS_Store
