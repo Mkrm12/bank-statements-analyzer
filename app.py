@@ -109,9 +109,42 @@ def increment_global_audits():
     with open(GLOBAL_STATS_FILE, "w") as f:
         json.dump(data, f, indent=4)
 
+def log_app_stat(metric_name):
+    """Tracks visits and API calls, and prints a live dashboard to the terminal."""
+    if not os.path.exists(GLOBAL_STATS_FILE):
+        data = {"audit_timestamps": [], "visits": 0, "gemini": 0, "groq": 0, "github": 0}
+    else:
+        with open(GLOBAL_STATS_FILE, "r") as f:
+            try:
+                data = json.load(f)
+            except:
+                data = {"audit_timestamps": [], "visits": 0, "gemini": 0, "groq": 0, "github": 0}
+    
+    for k in ["visits", "gemini", "groq", "github"]:
+        if k not in data: data[k] = 0
+        
+    if metric_name in data:
+        data[metric_name] += 1
+        
+    with open(GLOBAL_STATS_FILE, "w") as f:
+        json.dump(data, f, indent=4)
+        
+    print(f"\n--- 📊 LIVE PULSE STATS [{datetime.now().strftime('%H:%M:%S')}] ---")
+    print(f"👁️  Total Visits:  {data['visits']}")
+    print(f"⚡  Active Audits: {len(data.get('audit_timestamps', []))} / {MAX_GLOBAL_AUDITS}")
+    print(f"🤖  Gemini Calls:  {data['gemini']}")
+    print(f"🚀  Groq Calls:    {data['groq']}")
+    print(f"🐙  GitHub Calls:  {data['github']}")
+    print("-----------------------------------")
+
 if not os.path.exists(AUTH_FILE):
     with open(AUTH_FILE, "w") as f:
         json.dump({"valid_passes": INITIAL_PASSES}, f, indent=4)
+
+# --- VISITOR TRACKING ---
+if "has_been_counted" not in st.session_state:
+    st.session_state.has_been_counted = True
+    log_app_stat("visits")
 
 if "audit_complete" not in st.session_state:
     st.session_state.audit_complete = False
@@ -289,17 +322,6 @@ if page_selection == "Setup" or page_selection == "📁 Add More Statements":
     # Only show the uploaders and virtual generator if the page isn't locked AND they have file allowance left
     if not is_locked and files_remaining > 0:
         uploaded_files = st.file_uploader(f"Drop your HSBC or Santander PDFs here ({files_remaining} valid file(s) remaining)", accept_multiple_files=True, type=['pdf'])
-        
-        # === THE 'X' BUTTON SYNC FIX ===
-        if uploaded_files is not None:
-            current_file_names = [f.name for f in uploaded_files]
-            # Find files that are in memory but were 'X'd out by the user
-            removed_files = [name for name in st.session_state.processed_filenames if name not in current_file_names and name != "Virtual_Statement.json"]
-            
-            for removed in removed_files:
-                st.session_state.processed_filenames.remove(removed)
-                if removed in st.session_state.master_pdf_dict:
-                    del st.session_state.master_pdf_dict[removed] 
 
         if uploaded_files:
             st.write("---")
@@ -443,6 +465,13 @@ if page_selection == "Setup" or page_selection == "📁 Add More Statements":
             with st.spinner(f"Analyzing with {ai_choice}... (This may take up to 60 seconds on the first run)"):
                 try:
                     st.session_state.api_calls_used += 2 
+                    
+                    # LOG THE AUDIT CALL
+                    if "Gemini" in ai_choice:
+                        log_app_stat("gemini")
+                    else:
+                        log_app_stat("github")
+                        
                     categorized_df, summary_df, roast = run_ai_audit(master_df, ai_choice)
                     
                     increment_global_audits()
@@ -617,17 +646,22 @@ elif page_selection == "💬 AI Chat Assistant":
                 if st.session_state.auth_role is None:
                     # Base User: Gemini Flash -> fallback to Groq 70b
                     llm = gemini_flash_lite.with_fallbacks([groq_70b])
+                    log_app_stat("gemini")
                 elif st.session_state.auth_role == "recruiter":
                     # Recruiter: Gemini Flash -> fallback to GitHub GPT-4o-mini
                     llm = gemini_flash.with_fallbacks([gpt4o_mini])
+                    log_app_stat("gemini")
                 else:
                     # Master: Follows sidebar selection
                     if st.session_state.get("ai_choice") == "Option 1: Gemini Flash 2.5":
                         llm = gemini_flash.with_fallbacks([gpt4o_mini])
+                        log_app_stat("gemini")
                     else:
                         llm = gpt4o_mini.with_fallbacks([groq_70b])
+                        log_app_stat("github")
                 
                 search_df = st.session_state.categorized_df.copy()
+                
                 csv_data = search_df[['Timeline_ID', 'Date', 'Bank', 'Clean_Description', 'Category', 'Amount']].to_csv(index=False)
                 
                 today_date = datetime.now().strftime('%Y-%m-%d')

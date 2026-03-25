@@ -14,20 +14,14 @@ def parse_hsbc(pdf):
 
     for page in pdf.pages:
         raw_text = page.extract_text()
-        if not raw_text:
-            continue
+        if not raw_text: continue
             
         for line in raw_text.split('\n'):
             line = line.strip()
-            if not line:
-                continue
-            
-            if len(line) > 120:
-                continue
+            if not line or len(line) > 120: continue
                 
             junk_headers = ["BALANCE", "BROUGHT FORWARD", "PAGE", "ACCOUNT DETAILS", "PAYMENT TYPE"]
-            if any(keyword in line.upper() for keyword in junk_headers):
-                continue
+            if any(keyword in line.upper() for keyword in junk_headers): continue
 
             date_match = re.search(date_pattern, line)
             if date_match:
@@ -67,13 +61,11 @@ def parse_santander(pdf):
     
     for page in pdf.pages:
         raw_text = page.extract_text(layout=True) 
-        if not raw_text:
-            continue
+        if not raw_text: continue
             
         for line in raw_text.split('\n'):
             line = line.strip()
-            if not line:
-                continue
+            if not line: continue
             
             year_match = re.search(r'\b(202\d)\b', line)
             if year_match:
@@ -85,8 +77,7 @@ def parse_santander(pdf):
                 desc_val = match.group(2).strip()
                 amount_val = match.group(3).strip()
                 
-                if "balance" in desc_val.lower() or "brought forward" in desc_val.lower():
-                    continue
+                if "balance" in desc_val.lower() or "brought forward" in desc_val.lower(): continue
                 
                 desc_val = re.sub(r'\s+', ' ', desc_val)
                 clean_date = re.sub(r'(st|nd|rd|th)', '', raw_date, flags=re.IGNORECASE)
@@ -104,13 +95,111 @@ def parse_santander(pdf):
                 
     return parsed_transactions
 
-# --- 3. THE SMART ROUTER (Designed for Streamlit Uploads) ---
+# --- 3. STARLING PARSER ---
+def parse_starling(pdf):
+    parsed_transactions = []
+    starling_pattern = re.compile(r'^(\d{2}/\d{2}/\d{4})\s+(.+?)\s+£?([\d,]+\.\d{2})\s+£?[\d,]+\.\d{2}$')
+    
+    for page in pdf.pages:
+        raw_text = page.extract_text()
+        if not raw_text: continue
+            
+        for line in raw_text.split('\n'):
+            line = line.strip()
+            
+            junk_headers = ["OPENING BALANCE", "CLOSING BALANCE", "DATE TYPE", "END OF DAY", "ACCOUNT BALANCE"]
+            if any(junk in line.upper() for junk in junk_headers): continue
+            
+            match = starling_pattern.search(line)
+            if match:
+                raw_date = match.group(1)
+                desc_val = match.group(2).strip() 
+                amount_val = match.group(3)
+                
+                parsed_transactions.append({
+                    "Date": raw_date,
+                    "Description": desc_val,
+                    "Amount": amount_val,
+                    "Bank": "Starling"
+                })
+                
+    return parsed_transactions
+
+# --- 4. THE REVOLUT PARSER ---
+def parse_revolut(pdf):
+    parsed_transactions = []
+    rev_pattern = re.compile(r'^(\d{1,2}\s[A-Za-z]{3,4}\s\d{4})\s+(.+?)\s+£?([\d,]+\.\d{2})\s+£?[\d,]+\.\d{2}$')
+    reverted_pattern = re.compile(r'^(\d{1,2}\s[A-Za-z]{3,4}\s\d{4})\s+(.+?)\s+£?([\d,]+\.\d{2})$')
+    
+    current_date = ""
+    current_desc = ""
+    current_amount = ""
+
+    for page in pdf.pages:
+        raw_text = page.extract_text()
+        if not raw_text: continue
+
+        for line in raw_text.split('\n'):
+            line = line.strip()
+            if not line: continue
+
+            if "REVPOINTS SPARE CHANGE" in line.upper(): continue
+
+            junk_headers = [
+                "BALANCE SUMMARY", "ACCOUNT TRANSACTIONS FROM", "PRODUCT", "OPENING BALANCE", 
+                "CLOSING BALANCE", "REPORT LOST OR STOLEN", "SCAN THE QR CODE", "GET HELP DIRECTLY", 
+                "PAGE", "GBP STATEMENT", "GENERATED ON", "REVERTED FROM", "START DATE",
+                "REVOLUT LTD (NO.", "FINANCIAL CONDUCT AUTHORITY", "TRADING AND INVESTMENT SERVICES",
+                "RESOLUTION COMPLIANCE", "A WHOLLY OWNED SUBSIDIARY", "ELECTRONIC MONEY REGULATIONS",
+                "DATE DESCRIPTION MONEY" 
+            ]
+            
+            if line.upper() == "REVOLUT LTD": continue
+            if any(junk in line.upper() for junk in junk_headers): continue
+            if line.startswith("+44 20") or line.startswith("©"): continue
+
+            match = rev_pattern.search(line)
+            rev_match = reverted_pattern.search(line)
+
+            if match or rev_match:
+                if current_date and current_amount:
+                    parsed_transactions.append({
+                        "Date": current_date,
+                        "Description": current_desc.strip(),
+                        "Amount": current_amount,
+                        "Bank": "Revolut"
+                    })
+
+                if match:
+                    current_date = match.group(1)
+                    current_desc = match.group(2).strip()
+                    current_amount = match.group(3)
+                else:
+                    current_date = rev_match.group(1)
+                    current_desc = "[REVERTED] " + rev_match.group(2).strip()
+                    current_amount = rev_match.group(3)
+            else:
+                if current_date: 
+                    if "Revolut Rate" in line or "ECB rate" in line:
+                        continue 
+                    current_desc += " | " + line
+
+    if current_date and current_amount:
+        parsed_transactions.append({
+            "Date": current_date,
+            "Description": current_desc.strip(),
+            "Amount": current_amount,
+            "Bank": "Revolut"
+        })
+
+    return parsed_transactions
+
+# --- 5. THE SMART ROUTER (Designed for Streamlit Uploads) ---
 def process_pdf(file_object, file_name):
     """
     Takes a Streamlit uploaded file object, routes it, and returns a Pandas DataFrame.
     """
     try:
-        # pdfplumber can read directly from the virtual file memory!
         with pdfplumber.open(file_object) as pdf:
             if len(pdf.pages) == 0:
                 return None, f"❌ {file_name}: PDF is completely empty or locked."
@@ -121,26 +210,31 @@ def process_pdf(file_object, file_name):
                 
             text_upper = first_page_text.upper()
             
-            if "STATEMENT" not in text_upper and "ACCOUNT" not in text_upper:
-                 return None, f"❌ {file_name}: Doesn't look like a bank statement."
-
-            if "HSBC" in text_upper:
+            # Dynamic routing based on statement header
+            if "REVOLUT" in text_upper:
+                transactions = parse_revolut(pdf)
+            elif "STARLING" in text_upper:
+                transactions = parse_starling(pdf)
+            elif "HSBC" in text_upper:
                 transactions = parse_hsbc(pdf)
             elif "SANTANDER" in text_upper:
                 transactions = parse_santander(pdf)
             else:
-                return None, f"❓ {file_name}: Unsupported Bank. Only HSBC and Santander are allowed."
+                return None, f"❓ {file_name}: Unsupported Bank. Only HSBC, Santander, Starling, and Revolut are allowed."
                 
             if not transactions:
                  return None, f"⚠️ {file_name}: Recognized the bank, but couldn't find any valid transactions."
                  
-            # Convert to Pandas instantly
+            # Instantly map to Pandas in Volatile RAM
             df = pd.DataFrame(transactions)
             
-            # Standardize dates
-            df['Date_Sorter'] = pd.to_datetime(df['Date'], errors='coerce')
+            # Standardize and sort dates
+            df['Date_Sorter'] = pd.to_datetime(df['Date'], format='mixed', dayfirst=True, errors='coerce')
             df = df.dropna(subset=['Date_Sorter'])
             df = df.sort_values(by='Date_Sorter', ascending=True)
+            
+            # Reformat to match the clean UI (e.g., "10 Sep 2025")
+            df['Date'] = df['Date_Sorter'].dt.strftime('%d %b %Y')
             df = df.drop(columns=['Date_Sorter'])
             
             return df, f"✅ {file_name}: Successfully extracted {len(df)} transactions!"
