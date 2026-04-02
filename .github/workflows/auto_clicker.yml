@@ -1,0 +1,64 @@
+name: Pulse E2E Auto-Clicker
+
+on:
+  schedule:
+    - cron: "0 * * * *" # Runs every hour
+  workflow_dispatch:
+
+jobs:
+  simulate-user:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          
+      - name: Install Playwright
+        run: |
+          pip install playwright
+          playwright install chromium
+          
+      - name: Run E2E Bot
+        run: |
+          python -c '
+          from playwright.sync_api import sync_playwright
+          
+          with sync_playwright() as p:
+              browser = p.chromium.launch(headless=True)
+              page = browser.new_page()
+              print("🌐 Visiting Pulse...")
+              page.goto("https://mkrm-pulse.streamlit.app/")
+              
+              # 1. Handle Hibernation
+              try:
+                  wake_btn = page.locator("text=Yes, get this app back up")
+                  if wake_btn.count() > 0:
+                      wake_btn.click()
+                      print("😴 App was asleep. Clicked wake up!")
+                      page.wait_for_timeout(15000) # Wait 15s for the oven to bake
+              except Exception:
+                  pass
+                  
+              # 2. Interact with Live UI
+              try:
+                  print("⚡ App is live. Running UI interactions...")
+                  # Wait for your main title to ensure Streamlit loaded
+                  page.wait_for_selector("text=Welcome to Pulse", timeout=15000)
+                  
+                  # Click the Unlock button in the sidebar
+                  page.locator("button:has-text(\"Unlock\")").click()
+                  print("✅ Clicked \"Unlock\" button.")
+                  page.wait_for_timeout(2000)
+                  
+                  # Intercept the OS file chooser so it doesn"t freeze, then click Upload
+                  with page.expect_file_chooser():
+                      page.locator("text=Upload").first.click()
+                  print("✅ Clicked \"Upload\" and dismissed OS popup.")
+                  
+                  print("🎉 Automation complete. Server activity registered.")
+              except Exception as e:
+                  print(f"⚠️ Interaction error: {e}")
+                  
+              browser.close()
+          '
