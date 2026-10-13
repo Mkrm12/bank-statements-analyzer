@@ -7,3 +7,5 @@ langchain-google-genai
 pdfplumber
 langchain-groq
 langchain-openai
+httpx
+fpdf2

@@ -40,6 +40,112 @@ div[role="radiogroup"] label:hover {
     background-color: #1F2937 !important;
 }
 
+/* Sidebar Inputs (Access Code) */
+[data-testid="stSidebar"] div[data-testid="stTextInput"] input {
+    background-color: #1E293B !important;
+    color: #FFFFFF !important;
+    border: 1px solid #334155 !important;
+    border-radius: 8px !important;
+}
+[data-testid="stSidebar"] div[data-testid="stTextInput"] input:focus {
+    border-color: #38BDF8 !important;
+}
+
+/* Sidebar BYOK Expander - Single Clean Dark Slate Card (No nested double borders) */
+[data-testid="stSidebar"] [data-testid="stExpander"],
+[data-testid="stSidebar"] div[data-testid="stExpander"] {
+    background-color: #1E293B !important;
+    border: 1px solid #334155 !important;
+    border-radius: 10px !important;
+    box-shadow: none !important;
+    margin-top: 6px !important;
+    margin-bottom: 6px !important;
+    overflow: hidden !important;
+}
+
+[data-testid="stSidebar"] [data-testid="stExpander"] details,
+[data-testid="stSidebar"] details {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+}
+
+[data-testid="stSidebar"] [data-testid="stExpander"] summary,
+[data-testid="stSidebar"] details summary {
+    background-color: #1E293B !important;
+    color: #F8FAFC !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    padding: 10px 14px !important;
+    border: none !important;
+    border-radius: 10px !important;
+    cursor: pointer !important;
+    transition: background-color 0.2s ease !important;
+}
+
+[data-testid="stSidebar"] details[open] summary {
+    border-bottom: 1px solid #334155 !important;
+    border-radius: 10px 10px 0 0 !important;
+}
+
+[data-testid="stSidebar"] details summary:hover {
+    background-color: #283548 !important;
+}
+
+[data-testid="stSidebar"] details summary * {
+    color: #F8FAFC !important;
+}
+
+[data-testid="stSidebar"] details summary svg {
+    fill: #94A3B8 !important;
+    color: #94A3B8 !important;
+}
+
+[data-testid="stSidebar"] [data-testid="stExpanderDetails"],
+[data-testid="stSidebar"] details > div:last-child {
+    background-color: #1E293B !important;
+    color: #F8FAFC !important;
+    border: none !important;
+    border-radius: 0 0 10px 10px !important;
+    padding: 10px 14px 14px 14px !important;
+}
+
+/* High Contrast Alert & Warning Banners (Fixes Invisible Text in img 2) */
+[data-testid="stAlert"] {
+    border-radius: 10px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+[data-testid="stAlert"] *,
+[data-testid="stAlert"] p,
+[data-testid="stAlert"] span,
+[data-testid="stAlert"] div {
+    color: #0F172A !important;
+    font-weight: 600 !important;
+}
+[data-testid="stAlert"] svg {
+    fill: #0F172A !important;
+    color: #0F172A !important;
+}
+
+[data-testid="stSidebar"] [data-testid="stExpander"] input {
+    background-color: #0F172A !important;
+    color: #FFFFFF !important;
+    border: 1px solid #334155 !important;
+    border-radius: 8px !important;
+    font-size: 13px !important;
+}
+
+[data-testid="stSidebar"] [data-testid="stExpander"] input:focus {
+    border-color: #38BDF8 !important;
+}
+
+[data-testid="stSidebar"] [data-testid="stExpander"] label {
+    color: #CBD5E1 !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+}
+
 /* Floating Metric Cards */
 [data-testid="stMetric"] {
     background-color: #FFFFFF !important;
@@ -101,33 +207,154 @@ div[data-testid="stExpander"] details summary {
     box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3) !important;
     transition: transform 0.1s ease !important;
 }
+[data-testid="baseButton-primary"] * {
+    color: #FFFFFF !important;
+}
 [data-testid="baseButton-primary"]:hover {
+    background: linear-gradient(135deg, #4338CA 0%, #2563EB 100%) !important;
     transform: translateY(-2px) !important;
     box-shadow: 0 6px 12px rgba(59, 130, 246, 0.4) !important;
+}
+[data-testid="baseButton-primary"]:hover * {
+    color: #FFFFFF !important;
+}
+[data-testid="baseButton-primary"]:disabled,
+div[data-testid="stButton"] button:disabled {
+    background: #9CA3AF !important;
+    background-color: #9CA3AF !important;
+    color: #E5E7EB !important;
+    cursor: not-allowed !important;
+    box-shadow: none !important;
+    transform: none !important;
+    opacity: 0.65 !important;
+}
+
+/* Secondary & Download Buttons (Normal state) - Clean Card Style */
+[data-testid="baseButton-secondary"],
+[data-testid="stDownloadButton"] button,
+.stDownloadButton button,
+div[data-testid="stButton"] button:not([data-testid="baseButton-primary"]) {
+    background-color: #FFFFFF !important;
+    color: #0F172A !important;
+    border: 1.5px solid #CBD5E1 !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    padding: 0.5rem 1rem !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+    transition: all 0.2s ease-in-out !important;
+}
+
+[data-testid="baseButton-secondary"] *,
+[data-testid="stDownloadButton"] button *,
+.stDownloadButton button *,
+div[data-testid="stButton"] button:not([data-testid="baseButton-primary"]) * {
+    color: #0F172A !important;
+    fill: #0F172A !important;
+}
+
+/* Secondary & Download Buttons (Hover & Focus state) - Crisp Dark Contrast */
+[data-testid="baseButton-secondary"]:hover,
+[data-testid="baseButton-secondary"]:focus,
+[data-testid="baseButton-secondary"]:active,
+[data-testid="stDownloadButton"] button:hover,
+[data-testid="stDownloadButton"] button:focus,
+[data-testid="stDownloadButton"] button:active,
+.stDownloadButton button:hover,
+.stDownloadButton button:focus,
+.stDownloadButton button:active,
+div[data-testid="stButton"] button:not([data-testid="baseButton-primary"]):hover,
+div[data-testid="stButton"] button:not([data-testid="baseButton-primary"]):focus,
+div[data-testid="stButton"] button:not([data-testid="baseButton-primary"]):active {
+    background-color: #0F172A !important;
+    color: #FFFFFF !important;
+    border-color: #0F172A !important;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Force inner text & svg inside button to match hover contrast */
+[data-testid="baseButton-secondary"]:hover *,
+[data-testid="baseButton-secondary"]:focus *,
+[data-testid="baseButton-secondary"]:active *,
+[data-testid="stDownloadButton"] button:hover *,
+[data-testid="stDownloadButton"] button:focus *,
+[data-testid="stDownloadButton"] button:active *,
+.stDownloadButton button:hover *,
+.stDownloadButton button:focus *,
+.stDownloadButton button:active *,
+div[data-testid="stButton"] button:not([data-testid="baseButton-primary"]):hover *,
+div[data-testid="stButton"] button:not([data-testid="baseButton-primary"]):focus *,
+div[data-testid="stButton"] button:not([data-testid="baseButton-primary"]):active * {
+    color: #FFFFFF !important;
+    fill: #FFFFFF !important;
 }
 
 /* CHAT UI GLOW-UP */
 .stChatMessage {
     border-radius: 16px !important;
-    padding: 20px !important;
+    padding: 16px 20px !important;
     margin-bottom: 15px !important;
 }
-.stChatMessage * {
-    color: #1F2937 !important;
+
+/* AI Assistant Bubble Style - High Contrast Dark Slate with White Text */
+[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarAssistant"]),
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"]),
+.stChatMessage {
+    background-color: #1E293B !important;
+    border: 1px solid #334155 !important;
+    border-radius: 16px 16px 16px 4px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+    padding: 18px 22px !important;
+    margin-bottom: 16px !important;
+    max-width: 95% !important;
 }
 
-/* AI Assistant Bubble Style */
-[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"]) {
-    background-color: #FFFFFF !important;
-    border: 1px solid #E5E7EB !important;
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05) !important;
+[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarAssistant"]) *,
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"]) *,
+[data-testid="stChatMessage"] p,
+[data-testid="stChatMessage"] span,
+[data-testid="stChatMessage"] div,
+[data-testid="stChatMessage"] li,
+[data-testid="stChatMessage"] strong,
+[data-testid="stChatMessage"] em,
+[data-testid="stChatMessage"] b,
+[data-testid="stChatMessage"] h1,
+[data-testid="stChatMessage"] h2,
+[data-testid="stChatMessage"] h3,
+[data-testid="stChatMessage"] h4,
+[data-testid="stChatMessage"] h5,
+[data-testid="stChatMessage"] h6 {
+    color: #F8FAFC !important;
 }
 
-/* User Bubble Style */
+
+/* User Bubble Style - Sleek Right-Aligned Blue Pill */
+[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]),
 [data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) {
-    background-color: #EEF2FF !important;
+    background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%) !important;
     border: none !important;
-    box-shadow: none !important;
+    border-radius: 18px 18px 4px 18px !important;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.22) !important;
+    padding: 14px 20px !important;
+    margin-bottom: 16px !important;
+    margin-left: auto !important;
+    max-width: 80% !important;
+    width: fit-content !important;
+    display: flex !important;
+    flex-direction: row-reverse !important;
+}
+
+[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]) *,
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) * {
+    color: #FFFFFF !important;
+}
+
+[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]) [data-testid="stChatMessageAvatarUser"],
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) [data-testid="chatAvatarIcon-user"] {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    margin-left: 12px !important;
+    margin-right: 0 !important;
 }
 
 /* --- STATIC SIDEBAR ARROWS (NO HOVERS) --- */
@@ -142,4 +369,47 @@ div[data-testid="stExpander"] details summary {
 [data-testid="stSidebarCollapseButton"] svg {
     color: #9CA3AF !important; /* Light Gray */
     fill: #9CA3AF !important;
+}
+
+/* --- FOOTER CHAT CONVERSATION BAR --- */
+[data-testid="stBottom"], [data-testid="stBottom"] > div, .stBottom, .stChatFloatingInputContainer {
+    background: #F9FAFB !important;
+    background-color: #F9FAFB !important;
+    border-top: 1px solid #E5E7EB !important;
+    padding-top: 6px !important;
+    padding-bottom: 14px !important;
+    z-index: 99 !important;
+}
+
+div[data-testid="stChatInput"],
+div[data-testid="stChatInput"] > div {
+    background-color: #1E293B !important;
+    border-radius: 24px !important;
+    border: 1px solid #334155 !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15) !important;
+    transition: all 0.2s ease-in-out !important;
+}
+
+div[data-testid="stChatInput"]:focus-within {
+    border-color: #38BDF8 !important;
+    box-shadow: 0 4px 18px rgba(56, 189, 248, 0.25) !important;
+}
+
+div[data-testid="stChatInput"] textarea,
+div[data-testid="stChatInput"] input,
+div[data-testid="stChatInput"] [contenteditable="true"] {
+    color: #FFFFFF !important;
+    background-color: transparent !important;
+    font-size: 14px !important;
+}
+
+div[data-testid="stChatInput"] textarea::placeholder,
+div[data-testid="stChatInput"] input::placeholder {
+    color: #94A3B8 !important;
+}
+
+div[data-testid="stChatInput"] button {
+    color: #38BDF8 !important;
+    background: transparent !important;
+    border: none !important;
 }

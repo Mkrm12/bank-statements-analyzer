@@ -1,0 +1,101 @@
+Date,Description,Amount,Direction,Cat,Sub,Trap,Reason,Running_Balance
+01 Jan 2026,ACME GLOBAL CORP MONTHLY SALARY,3450.0,In,Salary,Employment Wages,False,,4950.0
+02 Jan 2026,HMRC TAX REBATE REFUND,184.2,In,Benefits,Tax Rebates,True,"HMRC Inflow is a tax rebate/benefit, NOT employment salary",5134.2
+03 Jan 2026,RENT PAYMENT TO LANDLORD SMITH,1100.0,Out,Rent,Tenancy Rent,False,,4034.2
+04 Jan 2026,To: Jordan Ellis Nationwide,650.0,Out,Transfers,Internal Account Transfer,True,Own-account transfer to Nationwide household account,3384.2
+05 Jan 2026,To: Jordan Ellis Northbridge,300.0,Out,Transfers,Internal Account Transfer,True,Own-account transfer to Northbridge side-hustle account,3084.2
+06 Jan 2026,TFL TRAVEL CHG TFL.GOV.UK,3.4,Out,Transport,Public Transit,False,,3080.8
+07 Jan 2026,TFL TRAVEL CHG TFL.GOV.UK,3.4,Out,Transport,Public Transit,True,"Legitimate duplicate tap on same day, must NOT be deduped",3077.4
+08 Jan 2026,TRAINLINE TICKETS LONDON BRG,28.5,Out,Transport,Trains & Rail,False,,3048.9
+08 Jan 2026,UBER TRIP HELP.UBER.COM,16.8,Out,Taxis,Ride-Hailing,True,"Uber ride must be Taxis, NOT general Transport or Takeaway",3032.1
+09 Jan 2026,UBER *EATS PENDING,21.4,Out,Takeaway,Food Delivery,True,"Uber Eats must be Takeaway, NOT Taxis or Transport",3010.7
+10 Jan 2026,))) SUBWAY18831-0 UXBRIDGE,8.49,Out,Takeaway,Fast Food,True,"Digit-glued SUBWAY18831 must match Subway Takeaway, NOT Unknown",3002.21
+11 Jan 2026,PRET A MANGER VICTORIA,4.85,Out,Coffee,Cafes & Coffee,False,,2997.36
+12 Jan 2026,TESCO STORES 4921,42.18,Out,Groceries,Supermarket,False,,2955.18
+13 Jan 2026,SAINSBURYS S/MKTS LONDON,29.6,Out,Groceries,Supermarket,False,,2925.58
+14 Jan 2026,LIDL GB UXBRIDGE,18.25,Out,Groceries,Supermarket,False,,2907.33
+15 Jan 2026,PNR SUPERSTORE LONDON,4.5,Out,Groceries,Local Convenience,True,"PNR Superstore is a convenience food store, NOT transport",2902.83
+16 Jan 2026,CASH CONVERTERS UXBRIDGE,35.0,Out,Shopping,Secondhand & Variety,True,"Cash Converters is a retail store, NOT ATM Cash",2867.83
+17 Jan 2026,ATM CASH BARCLAYS HIGH ST,40.0,Out,Cash,ATM Withdrawal,False,,2827.83
+18 Jan 2026,SHELL ENERGY DIRECT DEBIT,78.5,Out,Energy,Gas & Electricity,True,"Shell Energy is home utility, NOT vehicle fuel",2749.33
+19 Jan 2026,BP CONNECT LEWISHAM,45.0,Out,Fuel,Petrol & Diesel,True,BP fuel station; prefix BP must NOT be stripped as Bill Payment,2704.33
+20 Jan 2026,SKY BET ONLINE DEPOSIT,15.0,Out,Gambling,Sports Betting,True,"Sky Bet is gambling, NOT Sky broadband/TV",2689.33
+21 Jan 2026,SKY BROADBAND DIRECT DEBIT,34.0,Out,Broadband,Internet Service,False,,2655.33
+22 Jan 2026,O2 ACADEMY BRIXTON TICKETS,42.5,Out,Entertainment,Live Events & Gigs,True,"O2 Academy is entertainment venue, NOT O2 mobile phone",2612.83
+23 Jan 2026,O2 MOBILE MONTHLY CONTRACT,22.0,Out,Mobile,Phone Contract,False,,2590.83
+24 Jan 2026,TESCO MOBILE DIRECT DEBIT,12.5,Out,Mobile,Phone Contract,True,"Tesco Mobile is phone contract, NOT Tesco grocery store",2578.33
+24 Jan 2026,TESCO BANK CREDIT CARD PMT,120.0,Out,Credit Card,Card Repayment,True,"Tesco Bank payment is credit card debt repayment, NOT groceries",2458.33
+25 Jan 2026,AMAZON PRIME VIDEO SUBSCRIPTION,8.99,Out,Streaming,Video Streaming,True,"Prime Video is digital streaming subscription, NOT marketplace shopping",2449.34
+26 Jan 2026,AMAZON UK MARKETPLACE,24.99,Out,Shopping,Online Retail,False,,2424.35
+27 Jan 2026,AMAZON UK MARKETPLACE REFUND,24.99,In,Refunds,Merchant Refund,True,"Amazon Inflow is a store return refund, NOT income or shopping",2449.34
+28 Jan 2026,FASTER PAYMENTS PPWDL53HJ FROM PAYPAL,150.0,In,Transfers,Payment App Withdrawal,True,"PayPal balance withdrawal (PPWDL) is money transfer, NOT merchant refund",2599.34
+29 Jan 2026,SALARY FINANCE LOAN REPAYMENT,85.0,Out,Loans,Loan Instalment,True,"Salary Finance Outflow is a loan repayment, NOT salary or transfer",2514.34
+30 Jan 2026,DISHOOM COVENT GARDEN,48.6,Out,Dining,Restaurants,False,,2465.74
+31 Jan 2026,FRANCO MANCA SOHO,18.5,Out,Dining,Restaurants,False,,2447.24
+01 Feb 2026,GREGGS THE BAKERY LONDON,3.65,Out,Takeaway,Fast Food,False,,2443.59
+02 Feb 2026,STARBUCKS COFFEE KINGS CROSS,4.45,Out,Coffee,Cafes & Coffee,False,,2439.14
+03 Feb 2026,THE RED LION PUB WESTMINSTER,14.8,Out,Bars,Pubs & Bars,False,,2424.34
+04 Feb 2026,BREWDOG SEVEN DIALS,18.2,Out,Bars,Pubs & Bars,False,,2406.14
+04 Feb 2026,DELIVEROO ORDER LONDON,26.5,Out,Takeaway,Food Delivery,False,,2379.64
+05 Feb 2026,JUST EAT PIZZA TAKEAWAY,19.8,Out,Takeaway,Food Delivery,False,,2359.84
+06 Feb 2026,To: Sarah Jenkins (Dinner share),24.3,Out,Peer-to-Peer,Personal Transfer,True,"Payment to another person is Peer-to-Peer, NOT internal transfer",2335.54
+07 Feb 2026,From: Michael Brown (Concert ticket),45.0,In,Peer-to-Peer,Personal Transfer,True,"Receipt from another person is Peer-to-Peer, NOT income or internal transfer",2380.54
+08 Feb 2026,To: Alex Davies,15.0,Out,Peer-to-Peer,Personal Transfer,False,,2365.54
+09 Feb 2026,NETFLIX.COM MONTHLY,10.99,Out,Streaming,Video Streaming,False,,2354.55
+09 Feb 2026,SPOTIFY UK SUBSCRIPTION,11.99,Out,Streaming,Music Streaming,False,,2342.56
+10 Feb 2026,DISNEY PLUS STREAMING,7.99,Out,Streaming,Video Streaming,False,,2334.57
+11 Feb 2026,OPENAI CHATGPT PLUS,19.99,Out,Software,AI Tools,False,,2314.58
+12 Feb 2026,GOOGLE ONE CLOUD STORAGE,1.99,Out,Software,Cloud Storage,False,,2312.59
+13 Feb 2026,ZARA CLOTHING OXFORD ST,65.0,Out,Fashion,Clothing & Apparel,False,,2247.59
+14 Feb 2026,ASOS.COM FASHION ORDER,38.5,Out,Fashion,Online Fashion,False,,2209.09
+14 Feb 2026,BOOTS THE CHEMIST UXBRIDGE,14.2,Out,Beauty,Cosmetics & Toiletries,False,,2194.89
+15 Feb 2026,SUPERDRUG STORES LONDON,8.75,Out,Beauty,Cosmetics & Toiletries,False,,2186.14
+16 Feb 2026,TRADITIONAL TURKISH BARBER,22.0,Out,Beauty,Hair & Grooming,False,,2164.14
+17 Feb 2026,OVERDRAFT MONTHLY USAGE FEE,6.5,Out,Fees,Bank Charges,True,"Bank overdraft charge is Fees, NOT general spending",2157.64
+18 Feb 2026,NON-STERLING TRANSACTION FEE,1.75,Out,Fees,Foreign Exchange Fees,True,"Card currency fee is Fees, NOT Shopping",2155.89
+19 Feb 2026,KLARNA INSTALMENT PMT 1 OF 3,24.5,Out,BNPL,Buy Now Pay Later,False,,2131.39
+20 Feb 2026,CLEARPAY MONTHLY SPLIT,18.0,Out,BNPL,Buy Now Pay Later,False,,2113.39
+20 Feb 2026,PUREGYM MONTHLY MEMBERSHIP,26.99,Out,Fitness,Gym Membership,False,,2086.4
+21 Feb 2026,BOOTS PHARMACY PRESCRIPTION,9.65,Out,Health,Pharmacy & Medicine,False,,2076.75
+22 Feb 2026,ODEON CINEMAS TICKETS,21.0,Out,Entertainment,Cinema & Theatre,False,,2055.75
+23 Feb 2026,STEAM GAMES PURCHASE,14.99,Out,Gaming,Video Games,False,,2040.76
+24 Feb 2026,PLAYSTATION NETWORK PSN,6.99,Out,Gaming,Gaming Subscription,False,,2033.77
+25 Feb 2026,TFL TRAVEL CHG,3.4,Out,Transport,Public Transit,False,,2030.37
+25 Feb 2026,TFL TRAVEL CHG,3.4,Out,Transport,Public Transit,False,,2026.97
+26 Feb 2026,TFL TRAVEL CHG,3.4,Out,Transport,Public Transit,False,,2023.57
+27 Feb 2026,TFL TRAVEL CHG,3.4,Out,Transport,Public Transit,False,,2020.17
+28 Feb 2026,TFL TRAVEL CHG,3.4,Out,Transport,Public Transit,False,,2016.77
+01 Mar 2026,TFL TRAVEL CHG,3.4,Out,Transport,Public Transit,False,,2013.37
+02 Mar 2026,TFL TRAVEL CHG,3.4,Out,Transport,Public Transit,False,,2009.97
+03 Mar 2026,TFL TRAVEL CHG,3.4,Out,Transport,Public Transit,False,,2006.57
+04 Mar 2026,TFL TRAVEL CHG,3.4,Out,Transport,Public Transit,False,,2003.17
+05 Mar 2026,TFL TRAVEL CHG,3.4,Out,Transport,Public Transit,False,,1999.77
+06 Mar 2026,TESCO STORES,12.45,Out,Groceries,Supermarket,False,,1987.32
+06 Mar 2026,SAINSBURYS,8.9,Out,Groceries,Supermarket,False,,1978.42
+07 Mar 2026,M&S SIMPLY FOOD,14.2,Out,Groceries,Supermarket,False,,1964.22
+08 Mar 2026,WAITROSE,16.5,Out,Groceries,Supermarket,False,,1947.72
+09 Mar 2026,COSTA COFFEE,3.8,Out,Coffee,Cafes & Coffee,False,,1943.92
+10 Mar 2026,CAFFE NERO,3.65,Out,Coffee,Cafes & Coffee,False,,1940.27
+11 Mar 2026,MCDONALDS RESTAURANT,7.29,Out,Takeaway,Fast Food,False,,1932.98
+12 Mar 2026,KFC RESTAURANT,8.49,Out,Takeaway,Fast Food,False,,1924.49
+13 Mar 2026,NANDOS CHICKEN,16.5,Out,Dining,Restaurants,False,,1907.99
+14 Mar 2026,WAGAMAMA NOODLES,18.2,Out,Dining,Restaurants,False,,1889.79
+15 Mar 2026,ARGOS RETAIL STORE,22.99,Out,Shopping,Department Stores,False,,1866.8
+16 Mar 2026,JOHN LEWIS & PARTNERS,45.0,Out,Shopping,Department Stores,False,,1821.8
+16 Mar 2026,WATERSTONES BOOKS,12.99,Out,Education,Books & Stationery,False,,1808.81
+17 Mar 2026,POST OFFICE POSTAGE,4.85,Out,Services,Postal Services,False,,1803.96
+18 Mar 2026,TIMPSON SHOE REPAIRS,11.0,Out,Services,Key Cutting & Repairs,False,,1792.96
+19 Mar 2026,ATM CASH LINK HIGH ST,20.0,Out,Cash,ATM Withdrawal,False,,1772.96
+20 Mar 2026,ATM CASH NOTEMACHINE,50.0,Out,Cash,ATM Withdrawal,False,,1722.96
+21 Mar 2026,SHELL PETROL STATION,38.0,Out,Fuel,Petrol & Diesel,False,,1684.96
+22 Mar 2026,RINGGO PARKING LONDON,4.2,Out,Parking,Parking Charges,False,,1680.76
+23 Mar 2026,JUSTPARK METERS,3.5,Out,Parking,Parking Charges,False,,1677.26
+24 Mar 2026,UBER RIDE CITY,12.4,Out,Taxis,Ride-Hailing,False,,1664.86
+25 Mar 2026,BOLT RIDES LONDON,11.2,Out,Taxis,Ride-Hailing,False,,1653.66
+26 Mar 2026,BRITISH HEART FOUNDATION,5.0,Out,Charity,Donations,False,,1648.66
+26 Mar 2026,CANCER RESEARCH UK,10.0,Out,Charity,Donations,False,,1638.66
+27 Mar 2026,NATIONAL LOTTERY ONLINE,5.0,Out,Gambling,Lottery,False,,1633.66
+28 Mar 2026,BET365 ONLINE,10.0,Out,Gambling,Sports Betting,False,,1623.66
+29 Mar 2026,MOONPIG GREETING CARDS,4.99,Out,Gifts,Cards & Gifts,False,,1618.67
+30 Mar 2026,CARD FACTORY UXBRIDGE,2.5,Out,Gifts,Cards & Gifts,False,,1616.17
+31 Mar 2026,SEPHORA UK BEAUTY,28.0,Out,Beauty,Cosmetics,False,,1588.17
